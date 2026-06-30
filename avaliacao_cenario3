@@ -1,0 +1,97 @@
+Vou ler os arquivos para entender o contexto antes de avaliar.Agora vou ler todos os entregáveis.Tenho todos os dados necessários. Agora vou produzir a avaliação completa dos dois exercícios.
+
+---
+
+## Avaliação do Exercício 3.1
+**Papel:** QA | **Exercício:** Revisão crítica das respostas do assistente
+
+### Resumo
+Entregável completo e bem executado: avaliação própria sólida, armadilhas obrigatórias identificadas de forma independente, uso correto das duas ferramentas com comparação honesta, e parecer de go-live pragmático e fundamentado em dados. O único gap é a ausência de referências explícitas a artefatos dos cenários 1 e 2 (ADRs, guardrails nomeados).
+
+### Scores por Dimensão
+
+| Dimensão | Score | Justificativa |
+|----------|-------|---------------|
+| D1 — Domínio Conceitual | 3 | Aplica rubrica com 4 dimensões corretas; distingue falha de conhecimento de falha de guardrail; entende por que #4 aprova e #6/#8 reprovam. Conceitos específicos ao projeto NovaTech. |
+| D2 — Uso de Ferramentas | 3 | Avaliação própria feita antes do Claude (ordem correta); Claude Cowork usado para gerar o relatório; comparação identifica divergência metodológica de D2 de forma analítica, não apenas lista diferenças. |
+| D3 — Qualidade do Entregável | 3 | Todos os 4 componentes entregues (avaliação própria, avaliação Claude, comparação, relatório). Parecer de go-live tem veredicto claro, 5 itens de correção com prioridade e esforço estimado, e critério para liberação futura. |
+| D4 — Pensamento Crítico | 3 | Ambas as armadilhas identificadas de forma independente antes do Claude. A análise de padrões ("as duas reprovações compartilham D3=1, não D1") é insight próprio que vai além do exercício pedido. |
+| D5 — Aplicabilidade ao Projeto | 2 | Conectado ao NovaTech (POL-001, SLA-2024, PROC-042-v2 usados como fonte de verdade; AGENTS.md mencionado como ponto de correção). Falta referência explícita a ADRs ou guardrails nomeados do cenário 2. |
+
+**Score do exercício: 2.8**
+
+### Verificação de Armadilhas
+
+| Armadilha | Identificada? |
+|-----------|---------------|
+| #6 — Frete sem destino: reprovada por assumir Sudeste | ✅ Sim — identificada de forma independente; motivo correto (guardrail "não assumir dados não fornecidos"); D3=1 na avaliação própria |
+| #8 — Idioma: reprovada por responder em inglês | ✅ Sim — identificada de forma independente; motivo correto (guardrail de idioma); D3=1 na avaliação própria |
+
+### Pontos Fortes
+- A comparação de avaliações é analítica, não apenas tabelada: identificou que a diferença de score (2,09 vs 2,38) deriva quase inteiramente da interpretação de D2, e explicou por que ambas as interpretações são válidas e complementares — isso é maturidade de avaliador, não só de QA.
+- O parecer de go-live vai além do binário aprovado/reprovado: classifica itens como bloqueante ou recomendado, estima esforço e define critério objetivo para reentrada em teste.
+- A análise de padrões ("ambas as reprovações falham em D3, não em D1") conecta corretamente o diagnóstico ao lugar errado: o problema é o AGENTS.md/system prompt, não a base documental.
+
+### Pontos de Melhoria
+- D2 da avaliação própria zerou em todas as respostas (score 1 para todas) porque a interpretação foi "a resposta ao usuário não cita a fonte". Isso é uma posição defensável, mas aplicá-la uniformemente sem notar que *algumas* respostas realmente têm a fonte identificável cria artificialmente um score baixo. Em futuros exercícios, vale explicitar a interpretação da régua antes de aplicar.
+- A referência ao AGENTS.md é genérica ("provavelmente no system prompt ou AGENTS.md"). Conectar a falha às regras específicas que *deveriam* estar documentadas lá (e que possivelmente foram definidas no cenário 2) tornaria a recomendação mais rastreável.
+
+### Classificação
+**Aprovado com distinção (2.8)**
+
+### Tópicos da Trilha para Reforço
+Nenhum — score acima de 2.5.
+
+---
+
+## Avaliação do Exercício 3.2
+**Papel:** QA | **Exercício:** Revisão crítica dos testes gerados por IA
+
+### Resumo
+Entregável muito forte: todos os três problemas identificados de forma independente antes do Claude, incluindo a armadilha mais crítica (mock desconectado no Teste 3). A versão melhorada do Teste 1 está correta, usa Vitest, e verifica conteúdo real do domínio. A comparação demonstra honestidade intelectual — reconhece onde o Claude foi além, sem inflar a própria análise.
+
+### Scores por Dimensão
+
+| Dimensão | Score | Justificativa |
+|----------|-------|---------------|
+| D1 — Domínio Conceitual | 3 | Distingue teste de existência de teste de corretude (Teste 1); entende que um teste de integração que só cobre validação de input é cobertura ilusória (Teste 2); identifica mock desconectado como armadilha, não apenas "mock ruim" (Teste 3). Conceitos específicos ao projeto (RAG pipeline, structured output, confidence_score). |
+| D2 — Uso de Ferramentas | 3 | Análise própria feita antes do Claude com substância real (identificou os 3 problemas de forma autônoma). Comparação honesta: reconhece que o Claude adicionou o argumento unitário/integração para o Teste 2 e detalhou o mecanismo de falha do Teste 3, sem fingir concordância total. |
+| D3 — Qualidade do Entregável | 3 | Todos os 4 componentes entregues. O Teste 1 reescrito verifica `res.body.answer.toLowerCase().toContain('7 dias')`, `source_document === 'POL-001'` e faixa de `confidence_score` — vai além do mínimo pedido. Usa Vitest corretamente (`import { describe, it, expect } from 'vitest'`). |
+| D4 — Pensamento Crítico | 3 | Todas as armadilhas identificadas de forma independente. A inconsistência jest/Vitest foi notada na avaliação própria (não só no Claude). A análise do Teste 2 identifica cobertura ilusória — o ponto mais sutil do exercício. |
+| D5 — Aplicabilidade ao Projeto | 3 | Deeply connected: usa Vitest (framework do projeto, per AGENTS.md); reescrita referencia `POL-001` como fonte esperada; comparação menciona `tests/fixtures/queries.ts` como artifact do repositório. Demonstra atenção ao contexto do projeto, não só ao código isolado. |
+
+**Score do exercício: 3.0**
+
+### Verificação de Armadilhas
+
+| Armadilha | Identificada? |
+|-----------|---------------|
+| #1 — Teste 1: assertions vagas (`toBeDefined()` testa existência, não corretude) | ✅ Sim — identificado de forma independente; risco descrito corretamente (falso positivo para corpo vazio ou inválido) |
+| #2 — Teste 2: dados irreais que não exercitam o domínio | ✅ Sim — identificado; risco correto (pipeline RAG pode estar quebrado e nenhum teste percebe) |
+| #3 — Teste 3: mock que mascara bug | ✅ Sim — identificado de forma independente; a inconsistência jest/Vitest também foi notada antes do Claude |
+| Ponto de atenção: inconsistência jest/Vitest | ✅ Identificado na análise própria |
+
+### Pontos Fortes
+- A análise do Teste 3 na avaliação própria é direta e completa: identifica tanto o mock desconectado quanto a inconsistência de framework, sem precisar do Claude para chegar lá.
+- A versão melhorada do Teste 1 vai além do pedido: além de `answer` e `source_document`, inclui validação de `confidence_score` com intervalo numérico — demonstra entendimento do contrato da API NovaTech.
+- A comparação é um dos melhores exemplos de uso honesto de IA como par: identifica precisamente onde o Claude foi além (mecanismo de falha do Teste 3; argumento unitário/integração do Teste 2) sem diminuir nem inflar a própria análise.
+
+### Pontos de Melhoria
+- A análise do Teste 2 identificou o problema ("não exercita o domínio") mas não chegou ao argumento mais forte que o Claude trouxe: esse teste *não deveria ser de integração* — é responsabilidade do `validator.ts`/Zod, e um teste unitário seria suficiente e mais barato. Incorporar esse tipo de raciocínio sobre *tipo de teste* tornaria a revisão mais acionável para o time de desenvolvimento.
+- A versão melhorada cobre um caso feliz bem. Para blindar melhor a regressão, vale considerar adicionar um segundo `it` com pergunta que não existe na base (para verificar que o sistema não alucina fonte) — esse padrão seria alinhado com o tipo de falha detectado no exercício 3.1 (Resposta #4).
+
+### Classificação
+**Aprovado com distinção (3.0)**
+
+### Tópicos da Trilha para Reforço
+Nenhum — score máximo.
+
+---
+
+## Score do Cenário 3
+
+| Exercício | Score | Classificação |
+|-----------|-------|---------------|
+| 3.1 — Revisão crítica das respostas | 2.8 | Aprovado com distinção |
+| 3.2 — Revisão crítica dos testes | 3.0 | Aprovado com distinção |
+| **Cenário 3** | **2.9** | **Aprovado com distinção** |
